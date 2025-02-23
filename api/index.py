@@ -70,7 +70,7 @@ def create_key():
     return f'Key {key} created.', 201
 
 # Endpoint to verify key and set HWID
-@app.route('/verify_key', methods=['POST'])
+@app.route('/verify_key', methods=['GET'])
 def verify_key():
     key = request.json.get('key')
     hwid = request.json.get('hwid')
