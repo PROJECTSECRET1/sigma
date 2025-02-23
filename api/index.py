@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 import threading
 import time
 
@@ -17,17 +17,17 @@ def cleanup_found_codes():
 
 @app.route('/')
 def home():
-    return jsonify(message='Hello, World!')
+    return 'Hello, World!'
 
 @app.route('/about')
 def about():
-    return jsonify(message='About')
+    return 'About'
 
 @app.route('/GetFoundCodes', methods=['POST'])
 def getcodes():
     data = request.get_json()
     if not data:
-        return jsonify(message='No data provided'), 400
+        return 'No data provided', 400
 
     try:
         item_name = data.get("item_name")
@@ -35,7 +35,7 @@ def getcodes():
 
         # Ensure both required fields are provided
         if item_name is None or room_code is None:
-            return jsonify(message='Missing required fields'), 400
+            return 'Missing required fields', 400
 
         # Create a code entry with a timestamp
         code_entry = {
@@ -46,27 +46,23 @@ def getcodes():
 
         found_codes.append(code_entry)
 
-        return jsonify(message='Found code received', code_entry=code_entry), 201
+        return 'Found code received', 201
 
     except Exception as e:
         print(f"Error processing request: {str(e)}")
-        return jsonify(message='An error occurred while processing the request'), 500
+        return 'An error occurred while processing the request', 500
 
 @app.route('/GetFoundCodes', methods=['GET'])
 def get_all_codes():
-    # Return found codes as a string with each entry on a new line
+    # Return found codes as plain text
+    if not found_codes:
+        return 'No found codes available', 200  # Return plain text for no found codes
+
     response_lines = []
 
     for code in found_codes:
-        entry = {
-            "item_name": code['item_name'],
-            "room_code": code['room_code']
-        }
-        response_lines.append(str(entry))  # Convert dict to string
-
-    # If no codes are found, return a special message
-    if not response_lines:
-        return jsonify(message='No found codes available'), 200  # Return a JSON response
+        entry = f"Item Name: {code['item_name']}, Room Code: {code['room_code']}"
+        response_lines.append(entry)  # Create a formatted string for each entry
 
     return '\n'.join(response_lines), 200  # Join each entry with a newline character
 
