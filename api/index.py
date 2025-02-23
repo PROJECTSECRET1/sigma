@@ -64,6 +64,13 @@ def get_all_codes():
 
     return '\n'.join(response_lines), 200  # Join each entry with a newline character
 
+@app.route('/ClearFoundCodes', methods=['POST'])
+def clear_found_codes():
+    with found_codes_lock:  # Acquire the lock before modifying the list
+        found_codes.clear()  # Clear the list of found codes
+        print("All found codes have been cleared.")  # Log operation for debugging
+    return 'Found codes cleared', 200  # Respond with success
+
 if __name__ == '__main__':
     # Start the cleanup thread
     cleanup_thread = threading.Thread(target=cleanup_found_codes, daemon=True)
