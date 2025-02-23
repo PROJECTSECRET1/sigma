@@ -60,20 +60,24 @@ def getcodes():
 
 @app.route('/GetFoundCodes', methods=['GET'])
 def get_all_codes():
-    # Construct the desired response
-    response = {
-        "found_codes": []
-    }
+    response_lines = []
 
+    # Construct the desired response
     for code in found_codes:
-        line = f"board_position: {code['board_position']}, item_name: {code['item_name']}, player_count: {code['player_count']}, region: {code['region']}, room_code: {code['room_code']}"
-        response["found_codes"].append(line)
+        entry = {
+            "board_position": code['board_position'],
+            "item_name": code['item_name'],
+            "player_count": code['player_count'],
+            "region": code['region'],
+            "room_code": code['room_code']
+        }
+        response_lines.append(entry)
     
     # If no codes are found, return a message
-    if not response["found_codes"]:
-        response["found_codes"].append("No found codes available.")
+    if not response_lines:
+        return jsonify(found_codes=[]), 200
     
-    return jsonify(response), 200
+    return jsonify(found_codes=response_lines), 200  # Return codes as JSON objects in an array
 
 if __name__ == '__main__':
     # Start the cleanup thread
