@@ -13,7 +13,7 @@ def cleanup_found_codes():
         time.sleep(180)  # Wait for 3 minutes
         with found_codes_lock:  # Acquire the lock before modifying the list
             found_codes.clear()  # Clear the list of found codes
-            print("All found codes have been cleared.")  # Optional log for debugging
+            print("All found codes have been cleared.")  # Log operation for debugging
 
 @app.route('/')
 def home():
@@ -53,7 +53,6 @@ def getcodes():
 
 @app.route('/GetFoundCodes', methods=['GET'])
 def get_all_codes():
-    # Return found codes as plain text
     with found_codes_lock:  # Acquire the lock before reading the list
         if not found_codes:
             return 'No found codes available', 200  # Return plain text for no found codes
