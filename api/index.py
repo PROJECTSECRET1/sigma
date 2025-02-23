@@ -30,12 +30,14 @@ def getcodes():
         return jsonify(message='No data provided'), 400
 
     try:
+        # Extract values from the request data
         item_name = data.get("item_name")
         room_code = data.get("room_code")
         player_count = data.get("player_count")
         region = data.get("region")
         board_position = data.get("board_position")
 
+        # Ensure all required fields are provided
         required_fields = [item_name, room_code, player_count, region, board_position]
         if any(field is None for field in required_fields):
             return jsonify(message='Missing required fields'), 400
@@ -60,6 +62,7 @@ def getcodes():
 
 @app.route('/GetFoundCodes', methods=['GET'])
 def get_all_codes():
+    # Return found codes as a string with each entry on a new line
     response_lines = []
 
     # Construct the desired response
@@ -71,17 +74,17 @@ def get_all_codes():
             "region": code['region'],
             "room_code": code['room_code']
         }
-        response_lines.append(entry)
+        response_lines.append(str(entry))  # Convert dict to string
     
-    # If no codes are found, return a message
+    # If no codes are found, return a special message
     if not response_lines:
-        return jsonify(found_codes=[]), 200
-    
-    return jsonify(found_codes=response_lines), 200  # Return codes as JSON objects in an array
+        return 'No found codes available.\n', 200  # Custom message or empty response
+
+    return '\n'.join(response_lines), 200  # Join each entry with a newline character
 
 if __name__ == '__main__':
     # Start the cleanup thread
     cleanup_thread = threading.Thread(target=cleanup_found_codes, daemon=True)
     cleanup_thread.start()
     
-    app.run(debug=True)
+    app.run(debug=False)  # Set debug to False to avoid unnecessary output formats
