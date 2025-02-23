@@ -33,15 +33,15 @@ def getcodes():
         item_name = data.get("item_name")
         room_code = data.get("room_code")
 
-        # Ensure all required fields are provided
-        required_fields = [item_name, room_code, player_count, region, board_position]
-        if any(field is None for field in required_fields):
+        # Ensure both required fields are provided
+        if item_name is None or room_code is None:
             return jsonify(message='Missing required fields'), 400
 
         # Create a code entry with a timestamp
         code_entry = {
             "item_name": item_name,
             "room_code": room_code,
+            "timestamp": time.time()  # Save the current timestamp
         }
 
         found_codes.append(code_entry)
@@ -57,17 +57,16 @@ def get_all_codes():
     # Return found codes as a string with each entry on a new line
     response_lines = []
 
-    # Construct the desired response
     for code in found_codes:
         entry = {
             "item_name": code['item_name'],
             "room_code": code['room_code']
         }
         response_lines.append(str(entry))  # Convert dict to string
-    
+
     # If no codes are found, return a special message
     if not response_lines:
-        return 'No found codes available.\n', 200  # Custom message or empty response
+        return jsonify(message='No found codes available'), 200  # Return a JSON response
 
     return '\n'.join(response_lines), 200  # Join each entry with a newline character
 
