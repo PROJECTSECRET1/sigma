@@ -30,12 +30,8 @@ def getcodes():
         return jsonify(message='No data provided'), 400
 
     try:
-        # Extract values from the request data
         item_name = data.get("item_name")
         room_code = data.get("room_code")
-        player_count = data.get("player_count")
-        region = data.get("region")
-        board_position = data.get("board_position")
 
         # Ensure all required fields are provided
         required_fields = [item_name, room_code, player_count, region, board_position]
@@ -46,10 +42,6 @@ def getcodes():
         code_entry = {
             "item_name": item_name,
             "room_code": room_code,
-            "player_count": player_count,
-            "region": region,
-            "board_position": board_position,
-            "timestamp": time.time()  # Save the current timestamp
         }
 
         found_codes.append(code_entry)
@@ -68,10 +60,7 @@ def get_all_codes():
     # Construct the desired response
     for code in found_codes:
         entry = {
-            "board_position": code['board_position'],
             "item_name": code['item_name'],
-            "player_count": code['player_count'],
-            "region": code['region'],
             "room_code": code['room_code']
         }
         response_lines.append(str(entry))  # Convert dict to string
