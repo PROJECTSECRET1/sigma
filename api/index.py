@@ -67,7 +67,7 @@ def get_codes():
 
     # Append the code entry in a thread-safe manner
     with lock:
-        code_entry = {"item_name": item_name, "room_code": room_code}
+        code_entry = {"Item In Code": item_name, "Code": room_code}
         found_codes.append(code_entry)
 
     return '', 201
@@ -77,7 +77,7 @@ def get_codes():
 def get_all_codes():
     with lock:
         if not found_codes:
-            return jsonify({'message': 'No found codes available'}), 200
+            return jsonify('No found codes available'), 200
 
         return jsonify(found_codes), 200  # Return as JSON
 
