@@ -33,19 +33,16 @@ def getcodes():
         item_name = data.get("item_name")
         room_code = data.get("room_code")
 
-        # Ensure both required fields are provided
         if item_name is None or room_code is None:
             return 'Missing required fields', 400
 
-        # Create a code entry with a timestamp
         code_entry = {
             "item_name": item_name,
             "room_code": room_code,
-            "timestamp": time.time()  # Save the current timestamp
+            "timestamp": time.time()  
         }
 
         found_codes.append(code_entry)
-
         return 'Found code received', 201
 
     except Exception as e:
