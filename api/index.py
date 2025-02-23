@@ -4,17 +4,16 @@ import time
 
 app = Flask(__name__)
 
-# List to store found codes, each with a timestamp
+# List to store found codes
 found_codes = []
 found_codes_lock = threading.Lock()  # Lock for thread safety
 
 def cleanup_found_codes():
     while True:
-        current_time = time.time()
+        time.sleep(180)  # Wait for 3 minutes
         with found_codes_lock:  # Acquire the lock before modifying the list
-            # Delete codes older than 60 seconds
-            found_codes[:] = [code for code in found_codes if (current_time - code['timestamp']) < 60]  # Replace the list in place
-        time.sleep(10)  # Check every 10 seconds
+            found_codes.clear()  # Clear the list of found codes
+            print("All found codes have been cleared.")  # Optional log for debugging
 
 @app.route('/')
 def home():
@@ -40,7 +39,7 @@ def getcodes():
         code_entry = {
             "item_name": item_name,
             "room_code": room_code,
-            "timestamp": time.time()  
+            "timestamp": time.time()  # included for potential future use
         }
 
         with found_codes_lock:  # Acquire the lock before modifying the list
@@ -60,7 +59,6 @@ def get_all_codes():
             return 'No found codes available', 200  # Return plain text for no found codes
 
         response_lines = []
-
         for code in found_codes:
             entry = f"Item Name: {code['item_name']}, Room Code: {code['room_code']}"
             response_lines.append(entry)  # Create a formatted string for each entry
