@@ -11,6 +11,7 @@ def cleanup_found_codes():
     while True:
         current_time = time.time()
         global found_codes
+        # Delete codes older than 60 seconds
         found_codes = [code for code in found_codes if (current_time - code['timestamp']) < 60]
         time.sleep(10)  # Check every 10 seconds
 
@@ -60,15 +61,19 @@ def getcodes():
 @app.route('/GetFoundCodes', methods=['GET'])
 def get_all_codes():
     # Construct the desired response
-    response_lines = []
+    response = {
+        "found_codes": []
+    }
+
     for code in found_codes:
         line = f"board_position: {code['board_position']}, item_name: {code['item_name']}, player_count: {code['player_count']}, region: {code['region']}, room_code: {code['room_code']}"
-        response_lines.append(line)
-
-    # Joining lines with a newline character
-    response_text = "\n".join(response_lines) if response_lines else "No found codes available."
+        response["found_codes"].append(line)
     
-    return jsonify(found_codes=response_text), 200
+    # If no codes are found, return a message
+    if not response["found_codes"]:
+        response["found_codes"].append("No found codes available.")
+    
+    return jsonify(response), 200
 
 if __name__ == '__main__':
     # Start the cleanup thread
